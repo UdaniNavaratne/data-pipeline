@@ -6,41 +6,32 @@ from datetime import datetime, timedelta
 import os
 import json
 
-# Google API permissions
 scope = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive"
 ]
 
-# Load service account credentials from file
 creds_dict = json.loads(os.environ["GOOGLE_CREDENTIALS"])
-
-creds = Credentials.from_service_account_info(
-    creds_dict,
-    scopes=scope
-)
-
-# Connect to Google Sheets
+creds = Credentials.from_service_account_info(creds_dict, scopes=scope)
 client = gspread.authorize(creds)
 
-# Open your sheet
 sheet = client.open("data_pipeline_test").sheet1
 
-# Create 5 random rows
 sources = ["Meta Ads", "MailerLite", "Asana", "Google Analytics", "Test"]
+run_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
 
 data_list = []
 for i in range(5):
     row = [
+        run_time,
         (datetime.today() - timedelta(days=i)).strftime("%Y-%m-%d"),
         random.choice(sources),
         random.randint(50, 500)
     ]
     data_list.append(row)
 
-data = pd.DataFrame(data_list, columns=["Date", "Source", "Value"])
+data = pd.DataFrame(data_list, columns=["Run Timestamp", "Date", "Source", "Value"])
 
-# Write to sheet
 sheet.clear()
 sheet.update([data.columns.values.tolist()] + data.values.tolist())
 
