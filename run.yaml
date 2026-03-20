@@ -23,3 +23,5 @@ jobs:
 
       - name: Run script
         run: python main.py
+        env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
