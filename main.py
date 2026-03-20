@@ -3,6 +3,8 @@ from google.oauth2.service_account import Credentials
 import pandas as pd
 import random
 from datetime import datetime, timedelta
+import os
+import json
 
 # Google API permissions
 scope = [
@@ -11,8 +13,10 @@ scope = [
 ]
 
 # Load service account credentials from file
-creds = Credentials.from_service_account_file(
-    "credentials.json",
+creds_dict = json.loads(os.environ["GOOGLE_CREDENTIALS"])
+
+creds = Credentials.from_service_account_info(
+    creds_dict,
     scopes=scope
 )
 
